@@ -1,0 +1,1913 @@
+[
+    {
+        "id": "2f7f5dbc.2c5342",
+        "type": "tab",
+        "label": "CBMサンプル",
+        "disabled": false,
+        "info": ""
+    },
+    {
+        "id": "57e04fcd.6d3fa",
+        "type": "debug",
+        "z": "2f7f5dbc.2c5342",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 370,
+        "y": 360,
+        "wires": []
+    },
+    {
+        "id": "d85534f8.e1c4a8",
+        "type": "inject",
+        "z": "2f7f5dbc.2c5342",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "monitoring-config",
+        "payloadType": "flow",
+        "x": 160,
+        "y": 360,
+        "wires": [
+            [
+                "57e04fcd.6d3fa"
+            ]
+        ]
+    },
+    {
+        "id": "363c6f73.dc6ae",
+        "type": "comment",
+        "z": "2f7f5dbc.2c5342",
+        "name": "設定ファイルから監視設定を読み込む",
+        "info": "",
+        "x": 170,
+        "y": 80,
+        "wires": []
+    },
+    {
+        "id": "b9fc92af.717fa",
+        "type": "comment",
+        "z": "2f7f5dbc.2c5342",
+        "name": "監視設定を更新する",
+        "info": "",
+        "x": 110,
+        "y": 420,
+        "wires": []
+    },
+    {
+        "id": "347f0178.4af7be",
+        "type": "file in",
+        "z": "2f7f5dbc.2c5342",
+        "name": "設定ファイルの読み込み",
+        "filename": "",
+        "format": "utf8",
+        "chunk": false,
+        "sendError": false,
+        "encoding": "none",
+        "x": 410,
+        "y": 140,
+        "wires": [
+            [
+                "42030a9d.dd6e84"
+            ]
+        ]
+    },
+    {
+        "id": "38f3b56b.a7cd3a",
+        "type": "inject",
+        "z": "2f7f5dbc.2c5342",
+        "name": "設定の初期化",
+        "props": [
+            {
+                "p": "filename",
+                "v": "/opt/cbm-demo/settings.json",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": true,
+        "onceDelay": "0.1",
+        "topic": "",
+        "payloadType": "str",
+        "x": 140,
+        "y": 140,
+        "wires": [
+            [
+                "347f0178.4af7be"
+            ]
+        ]
+    },
+    {
+        "id": "42030a9d.dd6e84",
+        "type": "json",
+        "z": "2f7f5dbc.2c5342",
+        "name": "",
+        "property": "payload",
+        "action": "",
+        "pretty": false,
+        "x": 610,
+        "y": 140,
+        "wires": [
+            [
+                "dc3b7f7c.4b751",
+                "1ba0c9d0.4507a6",
+                "d74e9e21.d3481"
+            ]
+        ]
+    },
+    {
+        "id": "202b9cb6.9610b4",
+        "type": "file",
+        "z": "2f7f5dbc.2c5342",
+        "name": "設定ファイルの更新",
+        "filename": "",
+        "appendNewline": true,
+        "createDir": true,
+        "overwriteFile": "true",
+        "encoding": "none",
+        "x": 880,
+        "y": 240,
+        "wires": [
+            [
+                "347f0178.4af7be"
+            ]
+        ]
+    },
+    {
+        "id": "dc3b7f7c.4b751",
+        "type": "change",
+        "z": "2f7f5dbc.2c5342",
+        "name": "監視設定を更新",
+        "rules": [
+            {
+                "t": "move",
+                "p": "payload",
+                "pt": "msg",
+                "to": "monitoring-config",
+                "tot": "flow"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 780,
+        "y": 140,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "1ba0c9d0.4507a6",
+        "type": "function",
+        "z": "2f7f5dbc.2c5342",
+        "name": "",
+        "func": "let lower = null;\nlet upper = null;\nlet threshold = null;\n\nif ('lower_limit_index' in msg.payload) {\n    lower = {\n        \"payload\": msg.payload.lower_limit_index\n    }\n}\n\nif ('upper_limit_index' in msg.payload) {\n    upper = {\n        \"payload\": msg.payload.upper_limit_index\n    }\n}\n\nif ('threshold' in msg.payload) {\n    threshold = {\n        \"payload\": msg.payload.threshold\n    }\n}\n\nreturn [lower, upper, threshold];",
+        "outputs": 3,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "x": 400,
+        "y": 480,
+        "wires": [
+            [
+                "57ede1fb.b3477"
+            ],
+            [
+                "7d2b7adf.b2a954"
+            ],
+            [
+                "4a9e5262.832a4c"
+            ]
+        ]
+    },
+    {
+        "id": "d74e9e21.d3481",
+        "type": "CANDY EGG http request",
+        "z": "2f7f5dbc.2c5342",
+        "name": "監視設定をクラウドと同期",
+        "account": "8ae11cac.53fb4",
+        "method": "POST",
+        "ret": "txt",
+        "path": "/cbm/settings",
+        "x": 820,
+        "y": 180,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "c8f2d608.70dc68",
+        "type": "change",
+        "z": "2f7f5dbc.2c5342",
+        "name": "設定情報の初期化",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "{\"lower_limit_index\":1,\"upper_limit_index\":10,\"threshold\":-10,\"running_threshold\":-65}",
+                "tot": "json"
+            },
+            {
+                "t": "set",
+                "p": "filename",
+                "pt": "msg",
+                "to": "/opt/cbm-demo/settings.json",
+                "tot": "str"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 650,
+        "y": 240,
+        "wires": [
+            [
+                "202b9cb6.9610b4"
+            ]
+        ]
+    },
+    {
+        "id": "5293c09b.0c7af",
+        "type": "function",
+        "z": "2f7f5dbc.2c5342",
+        "name": "監視設定を更新",
+        "func": "let conf = flow.get('monitoring-config')\nlet is_changed = false;\n\nnode.log(msg.payload);\n\nif (('lower_limit_index' in msg.payload) &&\n    (conf.lower_limit_index != msg.payload.lower_limit_index)) {\n     conf.lower_limit_index = msg.payload.lower_limit_index;\n     is_changed = true;\n}\n\nif (('upper_limit_index' in msg.payload) &&\n    (conf.upper_limit_index != msg.payload.upper_limit_index)){\n    conf.upper_limit_index = msg.payload.upper_limit_index;\n     is_changed = true;\n}\n\nif (('threshold' in msg.payload) &&\n    (conf.threshold != msg.payload.threshold)) {\n    conf.threshold = msg.payload.threshold;\n     is_changed = true;\n}\n\nif (is_changed === false) {\n    return null;\n}\n\nflow.set('monitoring-config', conf);\n\nmsg.payload = conf;\nmsg.filename = '/opt/cbm-demo/settings.json';\nreturn msg;\n",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "x": 660,
+        "y": 480,
+        "wires": [
+            [
+                "e3ab6d14.dad67",
+                "59f7c90b.a92198",
+                "f2abc6d6.42f018"
+            ]
+        ]
+    },
+    {
+        "id": "f8fbeec5.3c6ef",
+        "type": "CANDY EGG websocket in",
+        "z": "2f7f5dbc.2c5342",
+        "name": "",
+        "account": "8ae11cac.53fb4",
+        "path": "/cbm/settings",
+        "wholemsg": "false",
+        "x": 170,
+        "y": 480,
+        "wires": [
+            [
+                "1ba0c9d0.4507a6"
+            ]
+        ]
+    },
+    {
+        "id": "57ede1fb.b3477",
+        "type": "ui_dropdown",
+        "z": "2f7f5dbc.2c5342",
+        "name": "周波数下限",
+        "label": "周波数下限",
+        "tooltip": "",
+        "place": "Select option",
+        "group": "84c2c843.34f4a8",
+        "order": 2,
+        "width": 0,
+        "height": 0,
+        "passthru": true,
+        "multiple": false,
+        "options": [
+            {
+                "label": "0 Hz",
+                "value": 0,
+                "type": "num"
+            },
+            {
+                "label": "26 Hz",
+                "value": 1,
+                "type": "num"
+            },
+            {
+                "label": "52 Hz",
+                "value": 2,
+                "type": "num"
+            },
+            {
+                "label": "79 Hz",
+                "value": 3,
+                "type": "num"
+            },
+            {
+                "label": "105 Hz",
+                "value": 4,
+                "type": "num"
+            },
+            {
+                "label": "131 Hz",
+                "value": 5,
+                "type": "num"
+            },
+            {
+                "label": "157 Hz",
+                "value": 6,
+                "type": "num"
+            },
+            {
+                "label": "184 Hz",
+                "value": 7,
+                "type": "num"
+            },
+            {
+                "label": "210 Hz",
+                "value": 8,
+                "type": "num"
+            },
+            {
+                "label": "236 Hz",
+                "value": 9,
+                "type": "num"
+            },
+            {
+                "label": "262 Hz",
+                "value": 10,
+                "type": "num"
+            },
+            {
+                "label": "289 Hz",
+                "value": 11,
+                "type": "num"
+            },
+            {
+                "label": "315 Hz",
+                "value": 12,
+                "type": "num"
+            },
+            {
+                "label": "341 Hz",
+                "value": 13,
+                "type": "num"
+            },
+            {
+                "label": "367 Hz",
+                "value": 14,
+                "type": "num"
+            },
+            {
+                "label": "394 Hz",
+                "value": 15,
+                "type": "num"
+            },
+            {
+                "label": "420 Hz",
+                "value": 16,
+                "type": "num"
+            },
+            {
+                "label": "446 Hz",
+                "value": 17,
+                "type": "num"
+            },
+            {
+                "label": "472 Hz",
+                "value": 18,
+                "type": "num"
+            },
+            {
+                "label": "499 Hz",
+                "value": 19,
+                "type": "num"
+            },
+            {
+                "label": "525 Hz",
+                "value": 20,
+                "type": "num"
+            },
+            {
+                "label": "551 Hz",
+                "value": 21,
+                "type": "num"
+            },
+            {
+                "label": "577 Hz",
+                "value": 22,
+                "type": "num"
+            },
+            {
+                "label": "604 Hz",
+                "value": 23,
+                "type": "num"
+            },
+            {
+                "label": "630 Hz",
+                "value": 24,
+                "type": "num"
+            },
+            {
+                "label": "656 Hz",
+                "value": 25,
+                "type": "num"
+            },
+            {
+                "label": "682 Hz",
+                "value": 26,
+                "type": "num"
+            },
+            {
+                "label": "709 Hz",
+                "value": 27,
+                "type": "num"
+            },
+            {
+                "label": "735 Hz",
+                "value": 28,
+                "type": "num"
+            },
+            {
+                "label": "761 Hz",
+                "value": 29,
+                "type": "num"
+            },
+            {
+                "label": "787 Hz",
+                "value": 30,
+                "type": "num"
+            },
+            {
+                "label": "814 Hz",
+                "value": 31,
+                "type": "num"
+            },
+            {
+                "label": "840 Hz",
+                "value": 32,
+                "type": "num"
+            },
+            {
+                "label": "866 Hz",
+                "value": 33,
+                "type": "num"
+            },
+            {
+                "label": "892 Hz",
+                "value": 34,
+                "type": "num"
+            },
+            {
+                "label": "919 Hz",
+                "value": 35,
+                "type": "num"
+            },
+            {
+                "label": "945 Hz",
+                "value": 36,
+                "type": "num"
+            },
+            {
+                "label": "971 Hz",
+                "value": 37,
+                "type": "num"
+            },
+            {
+                "label": "997 Hz",
+                "value": 38,
+                "type": "num"
+            },
+            {
+                "label": "1024 Hz",
+                "value": 39,
+                "type": "num"
+            },
+            {
+                "label": "1050 Hz",
+                "value": 40,
+                "type": "num"
+            },
+            {
+                "label": "1076 Hz",
+                "value": 41,
+                "type": "num"
+            },
+            {
+                "label": "1102 Hz",
+                "value": 42,
+                "type": "num"
+            },
+            {
+                "label": "1129 Hz",
+                "value": 43,
+                "type": "num"
+            },
+            {
+                "label": "1155 Hz",
+                "value": 44,
+                "type": "num"
+            },
+            {
+                "label": "1181 Hz",
+                "value": 45,
+                "type": "num"
+            },
+            {
+                "label": "1207 Hz",
+                "value": 46,
+                "type": "num"
+            },
+            {
+                "label": "1234 Hz",
+                "value": 47,
+                "type": "num"
+            },
+            {
+                "label": "1260 Hz",
+                "value": 48,
+                "type": "num"
+            },
+            {
+                "label": "1286 Hz",
+                "value": 49,
+                "type": "num"
+            },
+            {
+                "label": "1312 Hz",
+                "value": 50,
+                "type": "num"
+            },
+            {
+                "label": "1339 Hz",
+                "value": 51,
+                "type": "num"
+            },
+            {
+                "label": "1365 Hz",
+                "value": 52,
+                "type": "num"
+            },
+            {
+                "label": "1391 Hz",
+                "value": 53,
+                "type": "num"
+            },
+            {
+                "label": "1417 Hz",
+                "value": 54,
+                "type": "num"
+            },
+            {
+                "label": "1443 Hz",
+                "value": 55,
+                "type": "num"
+            },
+            {
+                "label": "1470 Hz",
+                "value": 56,
+                "type": "num"
+            },
+            {
+                "label": "1496 Hz",
+                "value": 57,
+                "type": "num"
+            },
+            {
+                "label": "1522 Hz",
+                "value": 58,
+                "type": "num"
+            },
+            {
+                "label": "1548 Hz",
+                "value": 59,
+                "type": "num"
+            },
+            {
+                "label": "1575 Hz",
+                "value": 60,
+                "type": "num"
+            },
+            {
+                "label": "1601 Hz",
+                "value": 61,
+                "type": "num"
+            },
+            {
+                "label": "1627 Hz",
+                "value": 62,
+                "type": "num"
+            },
+            {
+                "label": "1653 Hz",
+                "value": 63,
+                "type": "num"
+            },
+            {
+                "label": "1680 Hz",
+                "value": 64,
+                "type": "num"
+            },
+            {
+                "label": "1706 Hz",
+                "value": 65,
+                "type": "num"
+            },
+            {
+                "label": "1732 Hz",
+                "value": 66,
+                "type": "num"
+            },
+            {
+                "label": "1758 Hz",
+                "value": 67,
+                "type": "num"
+            },
+            {
+                "label": "1785 Hz",
+                "value": 68,
+                "type": "num"
+            },
+            {
+                "label": "1811 Hz",
+                "value": 69,
+                "type": "num"
+            },
+            {
+                "label": "1837 Hz",
+                "value": 70,
+                "type": "num"
+            },
+            {
+                "label": "1863 Hz",
+                "value": 71,
+                "type": "num"
+            },
+            {
+                "label": "1890 Hz",
+                "value": 72,
+                "type": "num"
+            },
+            {
+                "label": "1916 Hz",
+                "value": 73,
+                "type": "num"
+            },
+            {
+                "label": "1942 Hz",
+                "value": 74,
+                "type": "num"
+            },
+            {
+                "label": "1968 Hz",
+                "value": 75,
+                "type": "num"
+            }
+        ],
+        "payload": "",
+        "topic": "",
+        "x": 170,
+        "y": 560,
+        "wires": [
+            [
+                "1158406b.a4fd"
+            ]
+        ]
+    },
+    {
+        "id": "7d2b7adf.b2a954",
+        "type": "ui_dropdown",
+        "z": "2f7f5dbc.2c5342",
+        "name": "周波数上限",
+        "label": "周波数上限",
+        "tooltip": "",
+        "place": "Select option",
+        "group": "84c2c843.34f4a8",
+        "order": 3,
+        "width": 0,
+        "height": 0,
+        "passthru": true,
+        "multiple": false,
+        "options": [
+            {
+                "label": "0 Hz",
+                "value": 0,
+                "type": "num"
+            },
+            {
+                "label": "26 Hz",
+                "value": 1,
+                "type": "num"
+            },
+            {
+                "label": "52 Hz",
+                "value": 2,
+                "type": "num"
+            },
+            {
+                "label": "79 Hz",
+                "value": 3,
+                "type": "num"
+            },
+            {
+                "label": "105 Hz",
+                "value": 4,
+                "type": "num"
+            },
+            {
+                "label": "131 Hz",
+                "value": 5,
+                "type": "num"
+            },
+            {
+                "label": "157 Hz",
+                "value": 6,
+                "type": "num"
+            },
+            {
+                "label": "184 Hz",
+                "value": 7,
+                "type": "num"
+            },
+            {
+                "label": "210 Hz",
+                "value": 8,
+                "type": "num"
+            },
+            {
+                "label": "236 Hz",
+                "value": 9,
+                "type": "num"
+            },
+            {
+                "label": "262 Hz",
+                "value": 10,
+                "type": "num"
+            },
+            {
+                "label": "289 Hz",
+                "value": 11,
+                "type": "num"
+            },
+            {
+                "label": "315 Hz",
+                "value": 12,
+                "type": "num"
+            },
+            {
+                "label": "341 Hz",
+                "value": 13,
+                "type": "num"
+            },
+            {
+                "label": "367 Hz",
+                "value": 14,
+                "type": "num"
+            },
+            {
+                "label": "394 Hz",
+                "value": 15,
+                "type": "num"
+            },
+            {
+                "label": "420 Hz",
+                "value": 16,
+                "type": "num"
+            },
+            {
+                "label": "446 Hz",
+                "value": 17,
+                "type": "num"
+            },
+            {
+                "label": "472 Hz",
+                "value": 18,
+                "type": "num"
+            },
+            {
+                "label": "499 Hz",
+                "value": 19,
+                "type": "num"
+            },
+            {
+                "label": "525 Hz",
+                "value": 20,
+                "type": "num"
+            },
+            {
+                "label": "551 Hz",
+                "value": 21,
+                "type": "num"
+            },
+            {
+                "label": "577 Hz",
+                "value": 22,
+                "type": "num"
+            },
+            {
+                "label": "604 Hz",
+                "value": 23,
+                "type": "num"
+            },
+            {
+                "label": "630 Hz",
+                "value": 24,
+                "type": "num"
+            },
+            {
+                "label": "656 Hz",
+                "value": 25,
+                "type": "num"
+            },
+            {
+                "label": "682 Hz",
+                "value": 26,
+                "type": "num"
+            },
+            {
+                "label": "709 Hz",
+                "value": 27,
+                "type": "num"
+            },
+            {
+                "label": "735 Hz",
+                "value": 28,
+                "type": "num"
+            },
+            {
+                "label": "761 Hz",
+                "value": 29,
+                "type": "num"
+            },
+            {
+                "label": "787 Hz",
+                "value": 30,
+                "type": "num"
+            },
+            {
+                "label": "814 Hz",
+                "value": 31,
+                "type": "num"
+            },
+            {
+                "label": "840 Hz",
+                "value": 32,
+                "type": "num"
+            },
+            {
+                "label": "866 Hz",
+                "value": 33,
+                "type": "num"
+            },
+            {
+                "label": "892 Hz",
+                "value": 34,
+                "type": "num"
+            },
+            {
+                "label": "919 Hz",
+                "value": 35,
+                "type": "num"
+            },
+            {
+                "label": "945 Hz",
+                "value": 36,
+                "type": "num"
+            },
+            {
+                "label": "971 Hz",
+                "value": 37,
+                "type": "num"
+            },
+            {
+                "label": "997 Hz",
+                "value": 38,
+                "type": "num"
+            },
+            {
+                "label": "1024 Hz",
+                "value": 39,
+                "type": "num"
+            },
+            {
+                "label": "1050 Hz",
+                "value": 40,
+                "type": "num"
+            },
+            {
+                "label": "1076 Hz",
+                "value": 41,
+                "type": "num"
+            },
+            {
+                "label": "1102 Hz",
+                "value": 42,
+                "type": "num"
+            },
+            {
+                "label": "1129 Hz",
+                "value": 43,
+                "type": "num"
+            },
+            {
+                "label": "1155 Hz",
+                "value": 44,
+                "type": "num"
+            },
+            {
+                "label": "1181 Hz",
+                "value": 45,
+                "type": "num"
+            },
+            {
+                "label": "1207 Hz",
+                "value": 46,
+                "type": "num"
+            },
+            {
+                "label": "1234 Hz",
+                "value": 47,
+                "type": "num"
+            },
+            {
+                "label": "1260 Hz",
+                "value": 48,
+                "type": "num"
+            },
+            {
+                "label": "1286 Hz",
+                "value": 49,
+                "type": "num"
+            },
+            {
+                "label": "1312 Hz",
+                "value": 50,
+                "type": "num"
+            },
+            {
+                "label": "1339 Hz",
+                "value": 51,
+                "type": "num"
+            },
+            {
+                "label": "1365 Hz",
+                "value": 52,
+                "type": "num"
+            },
+            {
+                "label": "1391 Hz",
+                "value": 53,
+                "type": "num"
+            },
+            {
+                "label": "1417 Hz",
+                "value": 54,
+                "type": "num"
+            },
+            {
+                "label": "1443 Hz",
+                "value": 55,
+                "type": "num"
+            },
+            {
+                "label": "1470 Hz",
+                "value": 56,
+                "type": "num"
+            },
+            {
+                "label": "1496 Hz",
+                "value": 57,
+                "type": "num"
+            },
+            {
+                "label": "1522 Hz",
+                "value": 58,
+                "type": "num"
+            },
+            {
+                "label": "1548 Hz",
+                "value": 59,
+                "type": "num"
+            },
+            {
+                "label": "1575 Hz",
+                "value": 60,
+                "type": "num"
+            },
+            {
+                "label": "1601 Hz",
+                "value": 61,
+                "type": "num"
+            },
+            {
+                "label": "1627 Hz",
+                "value": 62,
+                "type": "num"
+            },
+            {
+                "label": "1653 Hz",
+                "value": 63,
+                "type": "num"
+            },
+            {
+                "label": "1680 Hz",
+                "value": 64,
+                "type": "num"
+            },
+            {
+                "label": "1706 Hz",
+                "value": 65,
+                "type": "num"
+            },
+            {
+                "label": "1732 Hz",
+                "value": 66,
+                "type": "num"
+            },
+            {
+                "label": "1758 Hz",
+                "value": 67,
+                "type": "num"
+            },
+            {
+                "label": "1785 Hz",
+                "value": 68,
+                "type": "num"
+            },
+            {
+                "label": "1811 Hz",
+                "value": 69,
+                "type": "num"
+            },
+            {
+                "label": "1837 Hz",
+                "value": 70,
+                "type": "num"
+            },
+            {
+                "label": "1863 Hz",
+                "value": 71,
+                "type": "num"
+            },
+            {
+                "label": "1890 Hz",
+                "value": 72,
+                "type": "num"
+            },
+            {
+                "label": "1916 Hz",
+                "value": 73,
+                "type": "num"
+            },
+            {
+                "label": "1942 Hz",
+                "value": 74,
+                "type": "num"
+            },
+            {
+                "label": "1968 Hz",
+                "value": 75,
+                "type": "num"
+            }
+        ],
+        "payload": "",
+        "topic": "",
+        "x": 170,
+        "y": 620,
+        "wires": [
+            [
+                "96e4a1d2.ad053"
+            ]
+        ]
+    },
+    {
+        "id": "4a9e5262.832a4c",
+        "type": "ui_slider",
+        "z": "2f7f5dbc.2c5342",
+        "name": "",
+        "label": "振幅しきい値",
+        "tooltip": "",
+        "group": "84c2c843.34f4a8",
+        "order": 1,
+        "width": 0,
+        "height": 0,
+        "passthru": true,
+        "outs": "end",
+        "topic": "",
+        "min": "-60",
+        "max": "20",
+        "step": 1,
+        "x": 180,
+        "y": 680,
+        "wires": [
+            [
+                "ff10b8f1.5924a8"
+            ]
+        ]
+    },
+    {
+        "id": "6e9d2ab2.e19654",
+        "type": "catch",
+        "z": "2f7f5dbc.2c5342",
+        "name": "設定ファイルが存在しない",
+        "scope": [
+            "347f0178.4af7be"
+        ],
+        "uncaught": false,
+        "x": 390,
+        "y": 240,
+        "wires": [
+            [
+                "c8f2d608.70dc68"
+            ]
+        ]
+    },
+    {
+        "id": "1158406b.a4fd",
+        "type": "change",
+        "z": "2f7f5dbc.2c5342",
+        "name": "",
+        "rules": [
+            {
+                "t": "move",
+                "p": "payload",
+                "pt": "msg",
+                "to": "payload.lower_limit_index",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 390,
+        "y": 560,
+        "wires": [
+            [
+                "5293c09b.0c7af"
+            ]
+        ]
+    },
+    {
+        "id": "96e4a1d2.ad053",
+        "type": "change",
+        "z": "2f7f5dbc.2c5342",
+        "name": "",
+        "rules": [
+            {
+                "t": "move",
+                "p": "payload",
+                "pt": "msg",
+                "to": "payload.upper_limit_index",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 390,
+        "y": 620,
+        "wires": [
+            [
+                "5293c09b.0c7af"
+            ]
+        ]
+    },
+    {
+        "id": "ff10b8f1.5924a8",
+        "type": "change",
+        "z": "2f7f5dbc.2c5342",
+        "name": "",
+        "rules": [
+            {
+                "t": "move",
+                "p": "payload",
+                "pt": "msg",
+                "to": "payload.threshold",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 390,
+        "y": 680,
+        "wires": [
+            [
+                "5293c09b.0c7af"
+            ]
+        ]
+    },
+    {
+        "id": "e3ab6d14.dad67",
+        "type": "debug",
+        "z": "2f7f5dbc.2c5342",
+        "name": "",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 670,
+        "y": 540,
+        "wires": []
+    },
+    {
+        "id": "31ac0c5a.fe03a4",
+        "type": "ADXL100x FFT in",
+        "z": "2f7f5dbc.2c5342",
+        "name": "EMQuest-VA",
+        "payloadFormat": "all",
+        "adxl100xFFT": "958b4937.bbaa88",
+        "numOfPeaks": 1,
+        "x": 110,
+        "y": 1080,
+        "wires": [
+            [
+                "8c878ebd.74866",
+                "d17ee8d8.d8ea28",
+                "588b5d3f.d31a14",
+                "337e52b0.aff96e"
+            ]
+        ]
+    },
+    {
+        "id": "8c878ebd.74866",
+        "type": "function",
+        "z": "2f7f5dbc.2c5342",
+        "name": "Get freqency with round-up",
+        "func": "msg.payload = Math.round(msg.payload.peaks[0].frequency * 1000) / 1000 * 1000;\nreturn msg;\n",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "x": 380,
+        "y": 1080,
+        "wires": [
+            [
+                "16508c98.3d37e3"
+            ]
+        ]
+    },
+    {
+        "id": "d17ee8d8.d8ea28",
+        "type": "function",
+        "z": "2f7f5dbc.2c5342",
+        "name": "Get amplitudewith round-up",
+        "func": "msg.payload = Math.round(msg.payload.peaks[0].amplitude * 1000) / 1000;\nreturn msg;\n",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "x": 380,
+        "y": 1140,
+        "wires": [
+            [
+                "148d91a8.329f5e"
+            ]
+        ]
+    },
+    {
+        "id": "16508c98.3d37e3",
+        "type": "ui_gauge",
+        "z": "2f7f5dbc.2c5342",
+        "name": "",
+        "group": "597f9c91.12ab24",
+        "order": 1,
+        "width": 0,
+        "height": 0,
+        "gtype": "gage",
+        "title": "Peak Frequency (Hz)",
+        "label": "Hz",
+        "format": "{{value}}",
+        "min": 0,
+        "max": "2000",
+        "colors": [
+            "#00b500",
+            "#e6e600",
+            "#ca3838"
+        ],
+        "seg1": "",
+        "seg2": "",
+        "x": 660,
+        "y": 1080,
+        "wires": []
+    },
+    {
+        "id": "148d91a8.329f5e",
+        "type": "ui_gauge",
+        "z": "2f7f5dbc.2c5342",
+        "name": "",
+        "group": "597f9c91.12ab24",
+        "order": 2,
+        "width": 0,
+        "height": 0,
+        "gtype": "gage",
+        "title": "Peak Amplitude (dB)",
+        "label": "dB",
+        "format": "{{value}}",
+        "min": "-120",
+        "max": "0",
+        "colors": [
+            "#00b500",
+            "#e6e600",
+            "#ca3838"
+        ],
+        "seg1": "",
+        "seg2": "",
+        "x": 660,
+        "y": 1140,
+        "wires": []
+    },
+    {
+        "id": "625d2ac1.9e1004",
+        "type": "ui_chart",
+        "z": "2f7f5dbc.2c5342",
+        "name": "",
+        "group": "426abd1d.f9b2e4",
+        "order": 3,
+        "width": "5",
+        "height": "8",
+        "label": "FFT",
+        "chartType": "line",
+        "legend": "false",
+        "xformat": "HH:mm:ss",
+        "interpolate": "linear",
+        "nodata": "",
+        "dot": false,
+        "ymin": "",
+        "ymax": "",
+        "removeOlder": 1,
+        "removeOlderPoints": "",
+        "removeOlderUnit": "3600",
+        "cutout": 0,
+        "useOneColor": false,
+        "useUTC": false,
+        "colors": [
+            "#1f77b4",
+            "#aec7e8",
+            "#ff7f0e",
+            "#2ca02c",
+            "#98df8a",
+            "#d62728",
+            "#ff9896",
+            "#9467bd",
+            "#c5b0d5"
+        ],
+        "useOldStyle": false,
+        "outputs": 1,
+        "x": 610,
+        "y": 820,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "73c0c00a.acbf7",
+        "type": "ADXL100x FFT in",
+        "z": "2f7f5dbc.2c5342",
+        "name": "EMQuest-VA",
+        "payloadFormat": "chart",
+        "adxl100xFFT": "958b4937.bbaa88",
+        "numOfPeaks": 1,
+        "x": 110,
+        "y": 820,
+        "wires": [
+            [
+                "bf894d6d.f07cb"
+            ]
+        ]
+    },
+    {
+        "id": "7a918ad6.9e4004",
+        "type": "debug",
+        "z": "2f7f5dbc.2c5342",
+        "name": "",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 630,
+        "y": 940,
+        "wires": []
+    },
+    {
+        "id": "bf894d6d.f07cb",
+        "type": "change",
+        "z": "2f7f5dbc.2c5342",
+        "name": "低い周波数帯の振幅を補正",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload[0].data[0][0]",
+                "pt": "msg",
+                "to": "-120",
+                "tot": "num"
+            },
+            {
+                "t": "set",
+                "p": "payload[0].data[0][1]",
+                "pt": "msg",
+                "to": "-120",
+                "tot": "num"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 360,
+        "y": 820,
+        "wires": [
+            [
+                "7a918ad6.9e4004",
+                "625d2ac1.9e1004",
+                "7897a17b.a5712"
+            ]
+        ]
+    },
+    {
+        "id": "7897a17b.a5712",
+        "type": "CANDY EGG websocket out",
+        "z": "2f7f5dbc.2c5342",
+        "name": "",
+        "account": "8ae11cac.53fb4",
+        "path": "/cbm/fft",
+        "wholemsg": "false",
+        "x": 680,
+        "y": 880,
+        "wires": []
+    },
+    {
+        "id": "588b5d3f.d31a14",
+        "type": "function",
+        "z": "2f7f5dbc.2c5342",
+        "name": "",
+        "func": "const conf = flow.get('monitoring-config') || {'lower_limit_index': 0, 'upper_limit_index': 0, 'threshold': 0 };\nlet fft = msg.payload.fft;\n\n// Ignore lower amplitude\nfft[0] = -120;\nfft[1] = -120;\n\nlet status = {};\n\nstatus['peak'] = {\n    frequency: Math.round(msg.payload.peaks[0].frequency * 1000) / 1000 * 1000,\n    amplitude: Math.round(msg.payload.peaks[0].amplitude * 1000) / 1000,\n};\n\nstatus['config'] = {\n  lower_limit: Math.round(conf.lower_limit_index * 107.5 / 4096 * 1000),\n  upper_limit: Math.round(conf.upper_limit_index * 107.5 / 4096 * 1000),\n  threshold: conf.threshold\n};\n\nif (status.peak.amplitude < conf.running_threshold) {\n    status['status'] = \"STOPPED\";\n} else {\n    status['status'] = \"RUNNING\";\n}\n\nstatus['anomaly'] = {};\n\n\nfor (let i = conf.lower_limit_index; i <= conf.upper_limit_index; i++) {\n    if (fft[i] >= conf.threshold) {\n        status.status = \"ANOMALY\";\n        if (status.anomaly.amplitude === undefined || status.anomaly.amplitude < fft[i]) {\n            status.anomaly.amplitude = Math.round(fft[i]);\n            status.anomaly.frequency = Math.round(i * 107.5 / 4096 * 1000);\n        }\n    }\n}\n\nmsg.payload = status;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "x": 320,
+        "y": 1340,
+        "wires": [
+            [
+                "3c048638.f4d03a",
+                "114bfa5f.9b0e26"
+            ]
+        ]
+    },
+    {
+        "id": "3c048638.f4d03a",
+        "type": "debug",
+        "z": "2f7f5dbc.2c5342",
+        "name": "",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 370,
+        "y": 1420,
+        "wires": []
+    },
+    {
+        "id": "337e52b0.aff96e",
+        "type": "CANDY EGG websocket out",
+        "z": "2f7f5dbc.2c5342",
+        "name": "",
+        "account": "8ae11cac.53fb4",
+        "path": "/cbm/peak",
+        "wholemsg": "false",
+        "x": 390,
+        "y": 1200,
+        "wires": []
+    },
+    {
+        "id": "b82c816e.f4781",
+        "type": "comment",
+        "z": "2f7f5dbc.2c5342",
+        "name": "FFTをチャートに表示",
+        "info": "",
+        "x": 120,
+        "y": 760,
+        "wires": []
+    },
+    {
+        "id": "ab27fe41.3fa8",
+        "type": "comment",
+        "z": "2f7f5dbc.2c5342",
+        "name": "ピーク周波数と振幅をチャートに表示",
+        "info": "",
+        "x": 170,
+        "y": 1000,
+        "wires": []
+    },
+    {
+        "id": "b610d34a.813ac",
+        "type": "comment",
+        "z": "2f7f5dbc.2c5342",
+        "name": "稼働ステータスを判定。稼働ステータスが一定時間続いたら変化したと判断する。",
+        "info": "",
+        "x": 550,
+        "y": 1280,
+        "wires": []
+    },
+    {
+        "id": "880d1b2a.ec6408",
+        "type": "Cache out",
+        "z": "2f7f5dbc.2c5342",
+        "name": "稼働ステータス履歴",
+        "cache": "f3e825d2.062b58",
+        "keyType": "msg",
+        "keyProperty": "topic",
+        "valueType": "msg",
+        "valueProperty": "payload",
+        "ttlType": "msg",
+        "ttlProperty": "",
+        "useString": false,
+        "x": 900,
+        "y": 1340,
+        "wires": []
+    },
+    {
+        "id": "114bfa5f.9b0e26",
+        "type": "function",
+        "z": "2f7f5dbc.2c5342",
+        "name": "ステータス履歴を保存",
+        "func": "const now = new Date();\nmsg.topic = String(now.getTime());\nmsg.payload = msg.payload;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "x": 570,
+        "y": 1340,
+        "wires": [
+            [
+                "880d1b2a.ec6408"
+            ]
+        ]
+    },
+    {
+        "id": "6c9833ec.50a43c",
+        "type": "inject",
+        "z": "2f7f5dbc.2c5342",
+        "name": "ステータス定期チェック",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "1",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"dump\":true}",
+        "payloadType": "json",
+        "x": 630,
+        "y": 1420,
+        "wires": [
+            [
+                "8c2413e4.63a53"
+            ]
+        ]
+    },
+    {
+        "id": "8c2413e4.63a53",
+        "type": "Cache in",
+        "z": "2f7f5dbc.2c5342",
+        "name": "稼働ステータス履歴",
+        "cache": "f3e825d2.062b58",
+        "keyType": "msg",
+        "keyProperty": "topic",
+        "valueType": "msg",
+        "valueProperty": "payload",
+        "useString": false,
+        "outputs": 1,
+        "x": 900,
+        "y": 1420,
+        "wires": [
+            [
+                "46335ca.ba683a4"
+            ]
+        ]
+    },
+    {
+        "id": "46335ca.ba683a4",
+        "type": "function",
+        "z": "2f7f5dbc.2c5342",
+        "name": "辞書を配列に変換",
+        "func": "const values = [];\nconst data = msg.payload;\n\nfor (let key in data) {\n    values.push(data[key]);\n    values.slice(-1)[0]['timestamp'] = key;\n}\nmsg.payload = values;\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "x": 930,
+        "y": 1500,
+        "wires": [
+            [
+                "43ce8797.cffca8"
+            ]
+        ]
+    },
+    {
+        "id": "43ce8797.cffca8",
+        "type": "function",
+        "z": "2f7f5dbc.2c5342",
+        "name": "ステータス変化が一定時間継続したかを判定",
+        "func": "const last_status = flow.get('last-status') || \"INITIALIZED\";\nconst values = msg.payload;\nlet current_status = \"UNKNOWN\";\n\nfor (let i = 1, len = values.length; i < len; ++i) {\n  if (values[0].status !== values[i].status) {\n      return null;\n  }\n}\n\nif (values.length === 0) {\n    msg.payload = {status: \"UNKNOWN\"};\n    \n} else {\n    current_status = values[0].status;\n    msg.payload = values[0];\n}\n\nif (last_status === current_status) {\n    return null;\n}\n\nflow.set('last-status', current_status);\n\nreturn msg;\n",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "x": 1010,
+        "y": 1580,
+        "wires": [
+            [
+                "f1c9276c.d7a4b8",
+                "c0468ee3.a91cf"
+            ]
+        ]
+    },
+    {
+        "id": "f1c9276c.d7a4b8",
+        "type": "debug",
+        "z": "2f7f5dbc.2c5342",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1320,
+        "y": 1600,
+        "wires": []
+    },
+    {
+        "id": "19baff58.605221",
+        "type": "inject",
+        "z": "2f7f5dbc.2c5342",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "last-status",
+        "payloadType": "flow",
+        "x": 560,
+        "y": 1540,
+        "wires": [
+            [
+                "adc2c28b.b51a5"
+            ]
+        ]
+    },
+    {
+        "id": "adc2c28b.b51a5",
+        "type": "debug",
+        "z": "2f7f5dbc.2c5342",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 650,
+        "y": 1600,
+        "wires": []
+    },
+    {
+        "id": "1c30a551.75548b",
+        "type": "comment",
+        "z": "2f7f5dbc.2c5342",
+        "name": "デバッグ：現在のステータスを表示",
+        "info": "",
+        "x": 600,
+        "y": 1500,
+        "wires": []
+    },
+    {
+        "id": "c0468ee3.a91cf",
+        "type": "CANDY EGG websocket out",
+        "z": "2f7f5dbc.2c5342",
+        "name": "",
+        "account": "8ae11cac.53fb4",
+        "path": "/cbm/status",
+        "wholemsg": "false",
+        "x": 1210,
+        "y": 1680,
+        "wires": []
+    },
+    {
+        "id": "59f7c90b.a92198",
+        "type": "file",
+        "z": "2f7f5dbc.2c5342",
+        "name": "設定ファイルの更新",
+        "filename": "",
+        "appendNewline": true,
+        "createDir": true,
+        "overwriteFile": "true",
+        "encoding": "none",
+        "x": 900,
+        "y": 480,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "f2abc6d6.42f018",
+        "type": "CANDY EGG http request",
+        "z": "2f7f5dbc.2c5342",
+        "name": "監視設定をクラウドと同期",
+        "account": "8ae11cac.53fb4",
+        "method": "POST",
+        "ret": "txt",
+        "path": "/cbm/settings",
+        "x": 920,
+        "y": 540,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "b67ab03a.975a3",
+        "type": "comment",
+        "z": "2f7f5dbc.2c5342",
+        "name": "デバッグ：現在の監視設定を表示",
+        "info": "",
+        "x": 150,
+        "y": 300,
+        "wires": []
+    },
+    {
+        "id": "f8e88f78.7acf1",
+        "type": "inject",
+        "z": "2f7f5dbc.2c5342",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "10",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "last-status",
+        "payloadType": "flow",
+        "x": 680,
+        "y": 1680,
+        "wires": [
+            [
+                "d0fbb53d.025e58"
+            ]
+        ]
+    },
+    {
+        "id": "d0fbb53d.025e58",
+        "type": "change",
+        "z": "2f7f5dbc.2c5342",
+        "name": "",
+        "rules": [
+            {
+                "t": "move",
+                "p": "payload",
+                "pt": "msg",
+                "to": "payload.status",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 920,
+        "y": 1680,
+        "wires": [
+            [
+                "c0468ee3.a91cf"
+            ]
+        ]
+    },
+    {
+        "id": "8ae11cac.53fb4",
+        "type": "CANDY EGG account",
+        "z": "",
+        "name": "",
+        "accountId": "",
+        "secure": true
+    },
+    {
+        "id": "84c2c843.34f4a8",
+        "type": "ui_group",
+        "z": "",
+        "name": "設定",
+        "tab": "517e31f4.997f1",
+        "order": 3,
+        "disp": true,
+        "width": "6",
+        "collapse": false
+    },
+    {
+        "id": "958b4937.bbaa88",
+        "type": "ADXL100x FFT",
+        "z": "",
+        "enabled": true,
+        "serialport": "/dev/ttyUSB0",
+        "identifier": "adxl100x-fft",
+        "edgeDeviceModel": "uq",
+        "emitFftValues": true
+    },
+    {
+        "id": "597f9c91.12ab24",
+        "type": "ui_group",
+        "z": "",
+        "name": "ビーク周波数・振幅",
+        "tab": "517e31f4.997f1",
+        "order": 2,
+        "disp": true,
+        "width": "6",
+        "collapse": false
+    },
+    {
+        "id": "426abd1d.f9b2e4",
+        "type": "ui_group",
+        "z": "",
+        "name": "FFT",
+        "tab": "517e31f4.997f1",
+        "order": 1,
+        "disp": true,
+        "width": "6",
+        "collapse": false
+    },
+    {
+        "id": "f3e825d2.062b58",
+        "type": "Cache",
+        "z": "",
+        "name": "MachineStatus",
+        "defaultTtl": "3",
+        "checkPeriod": "1"
+    },
+    {
+        "id": "517e31f4.997f1",
+        "type": "ui_tab",
+        "z": "",
+        "name": "振動解析デモ",
+        "icon": "dashboard",
+        "order": 3,
+        "disabled": false,
+        "hidden": false
+    }
+]
