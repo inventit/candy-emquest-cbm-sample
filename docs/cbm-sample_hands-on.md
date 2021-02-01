@@ -243,7 +243,7 @@ FFT の解析結果をリアルタイムて表示します。
 
 ### デモ動画
 
-* [https://youtu.be/_09uVUQB9nk](https://youtu.be/_09uVUQB9nk)
+* [https://youtu.be/jlBnhG521uQ](https://youtu.be/jlBnhG521uQ)
 
 # 変更履歴
 
