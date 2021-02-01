@@ -29,7 +29,7 @@ Access to the CANDY EGG dashboard. You can find an FFT chart, a peak frequency g
 
 Below is a demonstration video.
 
-* [https://youtu.be/_09uVUQB9nk](https://youtu.be/_09uVUQB9nk)
+* [https://youtu.be/jlBnhG521uQ](https://youtu.be/jlBnhG521uQ)
 
 ## Hands-on material
 
